@@ -37,13 +37,13 @@ add_executable(Ludo src/c++17/Board/Board.cpp  src/c++17/main.cpp)
 
 ################
 # Define a test
-add_executable(registerer_test src/c++17/Board/Board_unittest.cpp)
-target_link_libraries(registerer_test gtest_main)
+add_executable(register_test src/c++17/Board/Board_unittest.cpp)
+target_link_libraries(register_test gtest_main)
 
 ##################################
 # Just make the test runnable with
 #   $ make test
 enable_testing()
-add_test(NAME    registerer_test 
-         COMMAND registerer_test)
+add_test(NAME    register_test 
+         COMMAND register_test)
 
