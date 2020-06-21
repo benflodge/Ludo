@@ -1,4 +1,5 @@
 #include <vector>
+#include <math.h>
 
 enum class SpaceType { 
     NORMAL, 
@@ -18,8 +19,9 @@ enum class SpaceColour {
 class Space
 {
     public:
-	Space() : type(SpaceType::NORMAL), colour(SpaceColour::RED) {}
-	Space(SpaceType t) : type(t), colour(SpaceColour::RED) {}
+	Space() {}
+	Space(SpaceColour c) : colour(c) {}
+	Space(SpaceColour c, SpaceType t) : colour(c), type(t) {}
         SpaceType getType()
 	{
 	    return type;
@@ -34,14 +36,23 @@ class Space
 	SpaceColour colour;
 };
 
+const int BOARD_SIZE = 56;
+const int ZONE_SIZE = BOARD_SIZE / 4;
+
 class Board
 {
     public: 
-	Board() : board(56)
+	Board() : board(BOARD_SIZE)
 	{
-	    for(int i = 0; i < 4; i++)
+	    for(int i = 0; i < BOARD_SIZE; i++)
 	    {
-		board[i] = Space(SpaceType::START);
+		int section = (int)floor(i / ZONE_SIZE);
+		SpaceColour colour = static_cast<SpaceColour>(section);
+		SpaceType type; 
+		if(i % 14 == 0) {
+		    type = SpaceType::START;
+		}
+		board[i] = Space(colour, type);
 	    }
 	}
 
@@ -58,3 +69,4 @@ class Board
     private: 
 	std::vector<Space> board; 
 };
+
