@@ -6,9 +6,16 @@
 #include "gtest/gtest.h"
 #include "Board.cpp"
 
-TEST (BoardTest, BoardHas56Spaces) {
+TEST (BoardTest, BoardHas48NormalSpaces) {
     Board board;
-    ASSERT_EQ (board.getSize(), 56);
+    int normalSpaces = 0;
+    for(int i = 0; i < board.getSize(); i++)
+    {
+	SpaceType type = board.at(i).getType();
+	if(type == SpaceType::NORMAL) normalSpaces ++;
+    }
+
+    ASSERT_EQ (normalSpaces, 48);
 }
 
 TEST (BoardTest, TheFirstQuaterSpacesAreRed ) {
@@ -67,9 +74,11 @@ TEST (BoardTest, TheFouthQuaterSpacesArePurple) {
 
 TEST (BoardTest, TheFirstSpaceInEachSectionIsStart) {
     Board board;
+    int boardSize = board.getSize();
+    int sectionSize = boardSize / 4;
     int startSpaceCount = 0;
     
-    for(int i = 0; i < board.getSize(); i+=14)
+    for(int i = 0; i < boardSize; i+=sectionSize)
     {
 	SpaceType type = board.at(i).getType();
 	if(type == SpaceType::START){
@@ -79,4 +88,38 @@ TEST (BoardTest, TheFirstSpaceInEachSectionIsStart) {
 
     ASSERT_EQ (startSpaceCount, 4);
 }
+
+TEST (BoardTest, TheLastSpaceInEachSectionIsEnd) {
+    Board board;
+    int boardSize = board.getSize();
+    int sectionSize = boardSize / 4;
+    int endSpaceCount = 0;
+    
+    for(int i = 13; i < boardSize; i+=sectionSize)
+    {
+	SpaceType type = board.at(i).getType();
+	if(type == SpaceType::END){
+	    endSpaceCount ++;
+	}
+    }
+
+    ASSERT_EQ (endSpaceCount, 4);
+
+}
+
+// TEST (BoardTest, EachSectionHasAHomeRun) {
+//     Board board;
+//     board
+//     
+//     for(int i = 13; i < boardSize; i+=sectionSize)
+//     {
+// 	SpaceType type = board.at(i).getType();
+// 	if(type == SpaceType::END){
+// 	    endSpaceCount ++;
+// 	}
+//     }
+// 
+//     ASSERT_EQ (endSpaceCount, 4);
+// 
+// }
 

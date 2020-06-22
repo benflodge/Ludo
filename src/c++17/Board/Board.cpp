@@ -1,10 +1,11 @@
+#include <iostream>
 #include <vector>
 #include <math.h>
 
 enum class SpaceType { 
     NORMAL, 
-    START//, 
-    //END, 
+    START, 
+    END, 
     //RUN, 
     //HOME 
 };
@@ -20,7 +21,6 @@ class Space
 {
     public:
 	Space() {}
-	Space(SpaceColour c) : colour(c) {}
 	Space(SpaceColour c, SpaceType t) : colour(c), type(t) {}
         SpaceType getType()
 	{
@@ -48,9 +48,17 @@ class Board
 	    {
 		int section = (int)floor(i / ZONE_SIZE);
 		SpaceColour colour = static_cast<SpaceColour>(section);
-		SpaceType type; 
-		if(i % 14 == 0) {
+		SpaceType type;
+		int modResult = i % 14;
+		switch (modResult) {
+    		case 0:
 		    type = SpaceType::START;
+		    break;
+		case 13:
+		    type = SpaceType::END;
+		    break;
+		default:
+		    type = SpaceType::NORMAL;
 		}
 		board[i] = Space(colour, type);
 	    }
@@ -67,6 +75,11 @@ class Board
 	}
 
     private: 
-	std::vector<Space> board; 
+	std::vector<Space> board;
+//	std::vector<Space> redRun;
+//    	std::vector<Space> greenRun;
+//	std::vector<Space> orangeRun;
+//	std::vector<Space> purpleRun;
+
 };
 
