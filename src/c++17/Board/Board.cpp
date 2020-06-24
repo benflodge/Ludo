@@ -2,12 +2,26 @@
 #include <vector>
 #include <math.h>
 
+// game
+// players => 2 - 4
+// turn => player
+
+// player
+// counters => counter
+// rollDice
+// chooseCounter
+
+// counter
+// is colour
+// positionOnBoard
+// move
+
 enum class SpaceType { 
     NORMAL, 
     START, 
     END, 
-    //RUN, 
-    //HOME 
+    RUN, 
+    HOME 
 };
 
 enum class SpaceColour {
@@ -36,20 +50,23 @@ class Space
 	SpaceColour colour;
 };
 
+const int SECTIONS = 4;
 const int BOARD_SIZE = 56;
-const int ZONE_SIZE = BOARD_SIZE / 4;
+const int ZONE_SIZE = BOARD_SIZE / SECTIONS;
+const int HOME_RUN_SIZE = 6;
+const int TOTAL_BOARD_SIZE = HOME_RUN_SIZE * SECTIONS + BOARD_SIZE;
 
 class Board
 {
     public: 
-	Board() : board(BOARD_SIZE)
+	Board() : board(TOTAL_BOARD_SIZE)
 	{
 	    for(int i = 0; i < BOARD_SIZE; i++)
 	    {
 		int section = (int)floor(i / ZONE_SIZE);
 		SpaceColour colour = static_cast<SpaceColour>(section);
 		SpaceType type;
-		int modResult = i % 14;
+		int modResult = i % ZONE_SIZE;
 		switch (modResult) {
     		case 0:
 		    type = SpaceType::START;
@@ -62,11 +79,14 @@ class Board
 		}
 		board[i] = Space(colour, type);
 	    }
-	}
 
-	int getSize()
-	{
-	    return board.size();
+	    for(int i = BOARD_SIZE; i < TOTAL_BOARD_SIZE; i++)
+	    {
+		int section = (int)floor(i - BOARD_SIZE / HOME_RUN_SIZE);
+		SpaceColour colour = static_cast<SpaceColour>(section);
+		SpaceType type = (i - BOARD_SIZE) % 6 == 0 ? SpaceType::RUN : SpaceType::HOME; 
+		board[i] = Space(colour, type);
+	    }
 	}
 
 	Space at(int idx)
@@ -76,10 +96,5 @@ class Board
 
     private: 
 	std::vector<Space> board;
-//	std::vector<Space> redRun;
-//    	std::vector<Space> greenRun;
-//	std::vector<Space> orangeRun;
-//	std::vector<Space> purpleRun;
-
 };
 
