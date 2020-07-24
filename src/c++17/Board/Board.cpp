@@ -1,100 +1,107 @@
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <math.h>
 
-// game
-// players => 2 - 4
-// turn => player
+#include "../SpaceColour/SpaceColour.h"
+#include "../SpaceType/SpaceType.h"
+#include "../Space/Space.h"
 
-// player
-// counters => counter
-// rollDice
-// chooseCounter
+#include "Board.h"
 
-// counter
-// is colour
-// positionOnBoard
-// move
-
-enum class SpaceType { 
-    NORMAL, 
-    START, 
-    END, 
-    RUN, 
-    HOME 
-};
-
-enum class SpaceColour {
-    RED,
-    GREEN,
-    ORANGE,
-    PURPLE
-};
-
-class Space
+Board::Board() : m_board(TOTAL_BOARD_SIZE)
 {
-    public:
-	Space() {}
-	Space(SpaceColour c, SpaceType t) : colour(c), type(t) {}
-        SpaceType getType()
+	for(int i = 0; i < TOTAL_BOARD_SIZE; i++)
 	{
-	    return type;
-	}
-	SpaceColour getColour()
+	if (i < BOARD_SIZE)
 	{
-	    return colour;
+		m_board[i] = setBoardSpace(i);
 	}
+	else
+	{
+		m_board[i] = setRunSpace(i);
+	}
+	}
+}
 
-    private:
+Space Board::setBoardSpace(int i)
+{
+	int section = (int)floor(i / ZONE_SIZE);
+	SpaceColour colour = static_cast<SpaceColour>(section);
+	SpaceType type = computeSpaceType(i);
+
+	return Space(colour, type);
+}
+
+SpaceType Board::computeSpaceType(int i)
+{
 	SpaceType type;
-	SpaceColour colour;
-};
-
-const int SECTIONS = 4;
-const int BOARD_SIZE = 56;
-const int ZONE_SIZE = BOARD_SIZE / SECTIONS;
-const int HOME_RUN_SIZE = 6;
-const int TOTAL_BOARD_SIZE = HOME_RUN_SIZE * SECTIONS + BOARD_SIZE;
-
-class Board
-{
-    public: 
-	Board() : board(TOTAL_BOARD_SIZE)
+	switch (i % ZONE_SIZE)
 	{
-	    for(int i = 0; i < BOARD_SIZE; i++)
-	    {
-		int section = (int)floor(i / ZONE_SIZE);
-		SpaceColour colour = static_cast<SpaceColour>(section);
-		SpaceType type;
-		int modResult = i % ZONE_SIZE;
-		switch (modResult) {
-    		case 0:
-		    type = SpaceType::START;
-		    break;
+	case 0:
+			type = SpaceType::START;
+			break;
 		case 13:
-		    type = SpaceType::END;
-		    break;
+			type = SpaceType::END;
+			break;
 		default:
-		    type = SpaceType::NORMAL;
-		}
-		board[i] = Space(colour, type);
-	    }
-
-	    for(int i = BOARD_SIZE; i < TOTAL_BOARD_SIZE; i++)
-	    {
-		int section = (int)floor(i - BOARD_SIZE / HOME_RUN_SIZE);
-		SpaceColour colour = static_cast<SpaceColour>(section);
-		SpaceType type = (i - BOARD_SIZE) % 6 == 0 ? SpaceType::RUN : SpaceType::HOME; 
-		board[i] = Space(colour, type);
-	    }
+		type = SpaceType::NORMAL;
 	}
+	return type;
+}
 
-	Space at(int idx)
-	{
-	    return board[idx];
-	}
+Space Board::setRunSpace(int i)
+{
+	int section = (int)floor((i - BOARD_SIZE) / HOME_RUN_SIZE);
+	SpaceColour colour = static_cast<SpaceColour>(section);
+	SpaceType type = ((i - BOARD_SIZE) % 6) == 5 ? SpaceType::HOME: SpaceType::RUN;
+	return Space(colour, type);
+}
 
-    private: 
-	std::vector<Space> board;
-};
+Space Board::at(int position)
+{
+	return m_board[position];
+}
+
+Space Board::atRedHome()
+{
+	return m_board[0];
+}
+
+Space Board::atGreenHome()
+{
+	return m_board[14];
+}
+
+Space Board::atOrangeHome()
+{
+	return m_board[28];
+}
+
+Space Board::atPurpleHome()
+{
+	return m_board[42];
+}
+
+Space Board::atRedRun(int position)
+{
+	return m_board[BOARD_SIZE + position];
+}
+
+Space Board::atGreenRun(int position)
+{
+	return m_board[BOARD_SIZE + HOME_RUN_SIZE + position];
+}
+
+Space Board::atOrangeRun(int position)
+{
+	return m_board[BOARD_SIZE + (HOME_RUN_SIZE * 2) + position];
+}
+
+Space Board::atPurpleRun(int position)
+{
+	return m_board[BOARD_SIZE + (HOME_RUN_SIZE * 3) + position];
+}
+
+
 

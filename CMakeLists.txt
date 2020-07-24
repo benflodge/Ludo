@@ -33,17 +33,17 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 
 ################
 # Main Include
-add_executable(Ludo src/c++17/Board/Board.cpp  src/c++17/main.cpp)
+add_executable(Ludo src/c++17/Counter/Counter.cpp src/c++17/Player/Player.cpp src/c++17/Space/Space.cpp src/c++17/Board/Board.cpp  src/c++17/main.cpp)
 
 ################
 # Define a test
-add_executable(register_test src/c++17/Board/Board_unittest.cpp)
+add_executable(register_test src/c++17/Counter/Counter_unittest.cpp src/c++17/Player/Player_unittest.cpp src/c++17/Space/Space_unittest.cpp src/c++17/Board/Board_unittest.cpp)
 target_link_libraries(register_test gtest_main)
 
 ##################################
 # Just make the test runnable with
 #   $ make test
 enable_testing()
-add_test(NAME    register_test 
+add_test(NAME    register_test
          COMMAND register_test)
 
