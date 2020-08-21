@@ -2,14 +2,17 @@
 class Space;
 enum class SpaceColour;
 
+inline const int OFF_BOARD = -1;
+inline const int HOME_POSITION = 62;
+
 class Counter
 {
     public:
 		Counter(SpaceColour c);
 		SpaceColour getColour();
-		Space& getSpace();
-		void setSpace(Space* space);
+		int getPosition();
+		void setPosition(int position);
     private:
 		SpaceColour m_colour;
-		Space *m_space;
+		int m_position;
 };

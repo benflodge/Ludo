@@ -11,10 +11,10 @@ Player::Player(SpaceColour c) :
     m_colour(c),
     m_counters
     {
-        std::shared_ptr<Counter>(new Counter(c)),
-        std::shared_ptr<Counter>(new Counter(c)),
-        std::shared_ptr<Counter>(new Counter(c)),
-        std::shared_ptr<Counter>(new Counter(c))
+        Counter(c),
+        Counter(c),
+        Counter(c),
+        Counter(c)
     } {}
 
 SpaceColour Player::getColour()
@@ -27,5 +27,9 @@ void Player::setColour(SpaceColour colour)
     m_colour = colour;
 }
 
+Counter* Player::getCounter(int i)
+{
+    return &m_counters[i];
+}
 
 

@@ -100,7 +100,12 @@
 			"bit": "cpp",
 			"*.tcc": "cpp",
 			"memory_resource": "cpp",
-			"cinttypes": "cpp"
+			"cinttypes": "cpp",
+			"any": "cpp",
+			"forward_list": "cpp",
+			"list": "cpp",
+			"unordered_set": "cpp",
+			"variant": "cpp"
 		}
 	}
 }

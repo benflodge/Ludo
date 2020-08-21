@@ -10,7 +10,7 @@ class Space
         Space(SpaceColour c, SpaceType t);
         SpaceType getType();
         SpaceColour getColour();
-        Counter &getCounter();
+        Counter* getCounter();
         void setCounter(Counter* counter);
     private:
         SpaceType m_type;

@@ -7,18 +7,19 @@
 #include "../Space/Space.h"
 #include "Counter.h"
 
-Counter::Counter(SpaceColour c) : m_colour(c) {}
+Counter::Counter(SpaceColour c) : m_colour(c), m_position(OFF_BOARD) {}
+
 SpaceColour Counter::getColour()
 {
 	return m_colour;
 }
 
-Space& Counter::getSpace()
+int Counter::getPosition()
 {
-	return *m_space;
+	return m_position;
 }
 
-void Counter::setSpace(Space* space)
+void Counter::setPosition(int position)
 {
-	m_space = space;
+	m_position = position;
 }

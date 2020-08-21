@@ -8,7 +8,7 @@
 #include "Space.h"
 
 Space::Space() {}
-Space::Space(SpaceColour c, SpaceType t) : m_colour(c), m_type(t) {}
+Space::Space(SpaceColour c, SpaceType t) : m_colour(c), m_type(t), m_counter(nullptr) {}
 SpaceType Space::getType()
 {
 	return m_type;
@@ -19,9 +19,9 @@ SpaceColour Space::getColour()
 	return m_colour;
 }
 
-Counter& Space::getCounter()
+Counter* Space::getCounter()
 {
-	return *m_counter;
+	return m_counter;
 }
 
 void Space::setCounter(Counter* counter)

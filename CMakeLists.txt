@@ -33,7 +33,7 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 
 ################
 # Main Include
-add_executable(Ludo src/c++17/Counter/Counter.cpp src/c++17/Player/Player.cpp src/c++17/Space/Space.cpp src/c++17/Board/Board.cpp  src/c++17/main.cpp)
+add_executable(Ludo src/c++17/Counter/Counter.cpp src/c++17/Player/Player.cpp src/c++17/Space/Space.cpp src/c++17/HomeRun/HomeRun.cpp src/c++17/Board/Board.cpp src/c++17/Game/Game.cpp src/c++17/main.cpp)
 
 ################
 # Define a test

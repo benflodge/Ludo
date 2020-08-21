@@ -1,9 +1,10 @@
 #pragma once
 #include <memory>
 #include <array>
+#include "../Counter/Counter.h"
 
-class Counter;
 enum class SpaceColour;
+inline const int COUNTERS = 4;
 
 class Player
 {
@@ -11,8 +12,9 @@ class Player
 		Player(SpaceColour c);
 		SpaceColour getColour();
 		void setColour(SpaceColour colour);
+		Counter* getCounter(int i);
     private:
 		SpaceColour m_colour;
-		std::array<std::shared_ptr<Counter>, 4> m_counters;
+		std::array<Counter, COUNTERS> m_counters;
 };
 
