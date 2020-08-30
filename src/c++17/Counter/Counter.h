@@ -3,7 +3,7 @@ class Space;
 enum class SpaceColour;
 
 inline const int OFF_BOARD = -1;
-inline const int HOME_POSITION = 62;
+inline const int HOME_POSITION = 61;
 
 class Counter
 {

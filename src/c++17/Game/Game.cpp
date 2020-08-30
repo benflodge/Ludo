@@ -86,19 +86,23 @@ bool Game::moveCounter(Counter& counter, int newPosition)
 
 bool Game::moveHomeRunCounter(Counter& counter, int newPosition)
 {
+    int newHomeRunPosition = newPosition - BOARD_SIZE;
+
+    if (newHomeRunPosition >= HOME_RUN_SIZE)
+    {
+        // Need exact number to end the game
+        return false;
+    }
+
     SpaceColour colour = counter.getColour();
     HomeRun& homeRun = m_home_runs[colour];
-    Space* space = homeRun[newPosition];
+
+    Space* space = homeRun[newHomeRunPosition];
     Counter* target = space->getCounter();
 
     if(target)
     {
         // Cannot move on top of another counter of the same colour
-        return false;
-    }
-    else if (newPosition > BOARD_SIZE + HOME_RUN_SIZE)
-    {
-        // Need exact number to end the game
         return false;
     }
 
@@ -122,11 +126,12 @@ bool Game::moveHomeRunCounter(Counter& counter, int newPosition)
 void Game::removeCounterFromCurrentSpace(Counter& counter)
 {
     int currentPosition = counter.getPosition();
-    if(currentPosition > 56)
+    if(currentPosition >= BOARD_SIZE)
     {
+        int homeRunPosition = currentPosition - BOARD_SIZE;
         SpaceColour colour = counter.getColour();
         HomeRun& homeRun = m_home_runs[colour];
-        Space* currentSpace = homeRun[currentPosition];
+        Space* currentSpace = homeRun[homeRunPosition];
         assert(currentSpace->getCounter() == &counter);
         currentSpace->setCounter(nullptr);
     }
