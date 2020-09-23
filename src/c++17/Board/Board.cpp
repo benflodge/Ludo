@@ -60,12 +60,16 @@ int Board::getStart(SpaceColour colour)
 	{
 		case SpaceColour::RED:
 			startPosition = RED_START;
+			break;
 		case SpaceColour::GREEN:
 			startPosition = GREEN_START;
+			break;
 		case SpaceColour::ORANGE:
-			startPosition = RED_START;
+			startPosition = ORANGE_START;
+			break;
 		case SpaceColour::PURPLE:
-			startPosition = RED_START;
+			startPosition = PURPLE_START;
+			break;
 	}
 	return startPosition;
 }

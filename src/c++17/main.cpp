@@ -5,6 +5,8 @@
 #include <utility>
 #include <assert.h>
 #include <stdio.h>
+#include <string>
+#include <sstream>
 
 //#include <GL/gl3w.h>
 
@@ -20,6 +22,8 @@
 #include "Player/Player.h"
 #include "Board/Board.h"
 #include "Game/Game.h"
+
+
 
 int main (int argc, char **argv)
 {
@@ -46,16 +50,16 @@ int main (int argc, char **argv)
 
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
-    if (window == NULL)
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Ludo Game", nullptr, nullptr);
+    if (window == nullptr)
         return 1;
+
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
-
-    //bool err = gl3wInit() != 0;
     bool err = glewInit() != GLEW_OK;
-
+    if (err)
+        return 1;
 
 
     IMGUI_CHECKVERSION();
@@ -71,28 +75,121 @@ int main (int argc, char **argv)
 
     size_t players = 4;
     std::srand(std::time(nullptr));
-    Game game = Game{ players };
-
-    bool playing = true;
-
+    Game game;
 
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
-
         glfwPollEvents();
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-
         
-        ImGui::Begin("Another Window");   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
+        GameState gameState = game.getState();
+        ImGui::Begin("Ludo");
+
+        // In GUI
+        if (gameState == GameState::GAME_MENU) 
+        {
+            if (ImGui::Button("Start 1 Player Game")) 
+            {
+                game.startGame(1);
+            }
+            if (ImGui::Button("Start 2 Player Game"))
+            {
+                game.startGame(2);
+            }
+            if (ImGui::Button("Start 3 Player Game"))
+            {
+                game.startGame(3);
+            }
+            if (ImGui::Button("Start 4 Player Game"))
+            {
+                game.startGame(4);
+            }
+        }
+        
+
+        if (gameState == GameState::GAME_ROLL)
+        {
+            Player* player = game.getPlayerForTurn();
+            SpaceColour colour = player->getColour();
+            std::stringstream goInfoText;
+            goInfoText << "Player " << (int)colour << " Turn To Roll Dice" << std::endl;
+            std::string playerText = goInfoText.str();
+
+            if (ImGui::Button(playerText.c_str())) {
+                game.rollDice();
+            }
+        }
+
+        if (gameState == GameState::GAME_MOVE)
+        {
+            int rollResult = game.getRollResult();
+            Player* player = game.getPlayerForTurn();
+            SpaceColour colour = player->getColour();
+
+            std::stringstream goInfoText;
+            goInfoText << "Player " << (int)colour << " rolled a " << rollResult << " which counter will you move?" << std::endl;
+            std::string playerText = goInfoText.str();
+            ImGui::Text(playerText.c_str());
+
+            bool canMove = false;
+            for (int j = 0; j < COUNTERS; j++)
+            {
+                Counter* counter = player->getCounter(j);
+                int currentPosition = counter->getPosition();
+                if (currentPosition == HOME_POSITION)
+                {
+                    ImGui::Text("Counter Home!");
+                    continue;
+                }
+
+                int newPosition = game.findNewCounterPosition(*counter, rollResult);
+
+                if (newPosition == currentPosition)
+                {
+                    ImGui::Text("Counter cannot move!");
+                    continue;
+                }
+
+                if (newPosition >= BOARD_SIZE + HOME_RUN_SIZE)
+                {
+                    ImGui::Text("You must get an exact roll to finish the game!");
+                    continue;
+                }
+
+                canMove = true;
+
+                std::stringstream goInfoText;
+                goInfoText << "Player: " << (int)colour << " Counter: " << j << " Current Position: " << currentPosition << " newPosition: " << newPosition << std::endl;
+                std::string playerText = goInfoText.str();
+
+                if (ImGui::Button(playerText.c_str())) {
+
+                    if (newPosition >= BOARD_SIZE)
+                    {
+                        game.moveHomeRunCounter(*counter, newPosition);
+                        std::cout << "Player: " << (int)colour << " Rolls: " << rollResult << " Counter: " << j << " NewPosition on Home Run: " << newPosition << std::endl;
+                    }
+                    else if (newPosition >= 0)
+                    {
+                        game.moveCounter(*counter, newPosition);
+                        std::cout << "Player: " << (int)colour << " Rolls: " << rollResult << " Counter: " << j << " NewPosition: " << newPosition << std::endl;
+                    }
+
+                }
+            }
+
+
+            if (!canMove && ImGui::Button("Cannot move, skip turn.")) {
+                game.turnOver();
+            }
+        }
+
         ImGui::End();
-        
 
         // Rendering
         ImGui::Render();
@@ -104,70 +201,6 @@ int main (int argc, char **argv)
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
-
-
-        if (playing)
-        {
-            // take in turns to roll dice
-            for (size_t i = 0; i < players; i++)
-            {
-                if (!playing) break;
-
-                Player* player = game.getPlayer(i);
-                int rollResult = Game::rollDice();
-                bool moved = false;
-                std::cout << "Player: " << i << " Rolls: " << rollResult << std::endl;
-                for (int j = 0; j < COUNTERS; j++)
-                {
-                    Counter* counter = player->getCounter(j);
-                    int currentPosition = counter->getPosition();
-                    if (currentPosition == HOME_POSITION)
-                    {
-                        continue;
-                    }
-
-                    int newPosition = game.findNewCounterPosition(*counter, player->getColour(), rollResult);
-                    std::cout << "Player: " << i << " Current Position: " << currentPosition << " newPosition: " << newPosition << std::endl;
-
-                    if (newPosition >= 56)
-                    {
-                        moved = game.moveHomeRunCounter(*counter, newPosition);
-                        std::cout << "Player: " << i << " Rolls: " << rollResult << " Counter: " << j << " NewPosition on Home Run: " << newPosition << " Moved: " << moved << std::endl;
-                    }
-                    else if (newPosition >= 0)
-                    {
-                        moved = game.moveCounter(*counter, newPosition);
-                        std::cout << "Player: " << i << " Rolls: " << rollResult << " Counter: " << j << " NewPosition: " << newPosition << " Moved: " << moved << std::endl;
-                    }
-
-                    if (newPosition == HOME_POSITION)
-                    {
-                        bool hasWon = true;
-                        // Check others see if player has won
-                        for (size_t k = 0; k < COUNTERS; k++)
-                        {
-                            Counter* counter = player->getCounter(k);
-                            if (counter->getPosition() != HOME_POSITION)
-                            {
-                                hasWon = false;
-                            }
-                        }
-
-                        if (hasWon)
-                        {
-                            std::cout << "Player: " << i << " Has Won!!!!" << std::endl;
-                            playing = false;
-                            break;
-                        }
-                    }
-
-                    if (moved) {
-                        // Only move one counter per roll!
-                        break;
-                    }
-                }
-            }
-        }
 
     }
 

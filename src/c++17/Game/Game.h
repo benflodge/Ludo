@@ -12,21 +12,35 @@ class Counter;
 enum class SpaceType;
 enum class SpaceColour;
 
+enum class GameState {
+    GAME_ROLL,
+    GAME_MOVE,
+    GAME_MENU,
+    GAME_WON
+};
+
 class Game
 {
     public:
         Game();
-        Game(size_t players);
+        void startGame(size_t players);
         Player* getPlayer(int i);
-        int findNewCounterPosition(Counter& counter, SpaceColour playerColour, int rollResult);
+        Player* getPlayerForTurn();
+        GameState getState();
+        void rollDice();
+        int getRollResult();
+        int findNewCounterPosition(Counter& counter, int rollResult);
         bool moveCounter(Counter& counter, int newPosition);
         bool moveHomeRunCounter(Counter& counter, int newPosition);
+        void turnOver();
         void removeCounterFromCurrentSpace(Counter& counter);
         static bool canAddNewCounter(int const &rollResult);
-        static int rollDice();
 
     private:
+        GameState state;
         Board m_board;
+        size_t playersTurn;
+        int rollResult;
         std::vector<Player> m_players;
         std::map<SpaceColour, HomeRun> m_home_runs;
 };
