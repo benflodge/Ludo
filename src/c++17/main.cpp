@@ -43,8 +43,8 @@ int main (int argc, char **argv)
     // GL 3.0 + GLSL 130
     const char* glsl_version = "#version 130";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 
@@ -154,10 +154,26 @@ int main (int argc, char **argv)
                     ImGui::Text("Counter cannot move!");
                     continue;
                 }
-
                 if (newPosition >= BOARD_SIZE + HOME_RUN_SIZE)
                 {
                     ImGui::Text("You must get an exact roll to finish the game!");
+                    continue;
+                }
+
+                bool spaceTakenByPlayer = false;
+                for (int k = 0; k < COUNTERS; k++)
+                {
+                    Counter* counter = player->getCounter(k);
+                    int counterPos = counter->getPosition();
+                    if (newPosition == counterPos) {
+                        spaceTakenByPlayer = true;
+                        break;
+                    }
+                }
+
+                if (spaceTakenByPlayer)
+                {
+                    ImGui::Text("You are already on this space");
                     continue;
                 }
 
