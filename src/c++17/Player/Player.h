@@ -11,7 +11,6 @@ class Player
     public:
 		Player(SpaceColour c);
 		SpaceColour getColour();
-		void setColour(SpaceColour colour);
 		Counter* getCounter(int i);
     private:
 		SpaceColour m_colour;

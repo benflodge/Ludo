@@ -22,11 +22,6 @@ SpaceColour Player::getColour()
     return m_colour;
 }
 
-void Player::setColour(SpaceColour colour)
-{
-    m_colour = colour;
-}
-
 Counter* Player::getCounter(int i)
 {
     return &m_counters[i];
